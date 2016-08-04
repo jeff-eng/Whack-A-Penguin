@@ -10,6 +10,8 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    var slots = [WhackSlot]()
+    
     var gameScore: SKLabelNode!
     var score: Int = 0 {
         didSet {
@@ -29,6 +31,11 @@ class GameScene: SKScene {
         gameScore.position = CGPoint(x: 8, y: 8)
         gameScore.horizontalAlignmentMode = .Left
         addChild(gameScore)
+        
+        for i in 0..<5 { createSlotAt(CGPoint(x: 100 + (i * 170), y: 410)) }
+        for i in 0..<4 { createSlotAt(CGPoint(x: 180 + (i * 170), y: 320)) }
+        for i in 0..<5 { createSlotAt(CGPoint(x: 100 + (i * 170), y: 230)) }
+        for i in 0..<4 { createSlotAt(CGPoint(x: 180 + (i * 170), y: 140)) }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -39,4 +46,15 @@ class GameScene: SKScene {
 //    override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
 //    }
+    
+    func createSlotAt(pos: CGPoint) {
+        // Create instance of WhackSlot class
+        let slot = WhackSlot()
+        // Call the configureAtPosition method for this instance of WhackSlot
+        slot.configureAtPosition(pos)
+        // Insert the WhackSlot object into the Game Scene
+        addChild(slot)
+        // Store this object in the slots array that stores WhackSlot objects
+        slots.append(slot)
+    }
 }
