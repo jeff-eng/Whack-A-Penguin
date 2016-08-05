@@ -11,6 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var numRounds = 0
     var slots = [WhackSlot]()
     
     var gameScore: SKLabelNode!
@@ -98,6 +99,26 @@ class GameScene: SKScene {
     }
     
     func createEnemy() {
+        // Increments the numRounds counter each time this method is called
+        numRounds += 1
+        
+        // When the number of rounds hits 30, hide all the slots to end the game
+        if numRounds >= 30 {
+            for slot in slots {
+                slot.hide()
+            }
+            
+            let gameOver = SKSpriteNode(imageNamed: "gameOver")
+            // position x and y
+            gameOver.position = CGPoint(x: 512, y: 384)
+            // give a z position
+            gameOver.zPosition = 1
+            // add this child node to the Game Scene
+            addChild(gameOver)
+            
+            return
+        }
+        
         popupTime *= 0.991
         
         slots = GKRandomSource.sharedRandom().arrayByShufflingObjectsInArray(slots) as! [WhackSlot]
