@@ -49,7 +49,36 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-       /* Called when a touch begins */
+        if let touch = touches.first {
+            let location = touch.locationInNode(self)
+            let nodes = nodesAtPoint(location)
+            
+            for node in nodes {
+                if node.name == "charFriend" {
+                    let whackSlot = node.parent!.parent as! WhackSlot
+                    if !whackSlot.visible { continue }
+                    if whackSlot.isHit { continue }
+                    // call the hit method to make the penguin hide itself
+                    whackSlot.hit()
+                    // subtract 5 pts from score
+                    score -= 5
+                    // run action that plays a "bad hit" sound
+                    runAction(SKAction.playSoundFileNamed("whackBad.caf", waitForCompletion: false))
+                } else if node.name == "charEnemy" {
+                    let whackSlot = node.parent!.parent as! WhackSlot
+                    if !whackSlot.visible { continue }
+                    if whackSlot.isHit { continue }
+                    
+                    whackSlot.charNode.xScale = 0.85
+                    whackSlot.charNode.yScale = 0.85
+                    
+                    whackSlot.hit()
+                    score += 1
+                    
+                    runAction(SKAction.playSoundFileNamed("whack.caf", waitForCompletion: false))
+                }
+            }
+        }
         
     }
    
