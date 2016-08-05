@@ -49,6 +49,19 @@ class WhackSlot: SKNode {
             charNode.texture = SKTexture(imageNamed: "penguinEvil")
             charNode.name = "charEnemy"
         }
+        
+        RunAfterDelay(hideTime * 3.5) { [unowned self] in
+            self.hide()
+        }
+    }
+    
+    func hide() {
+        // conditional to exit out of function if visible property isn't true
+        if !visible { return }
+        // instructs character node to move down to hide
+        charNode.runAction(SKAction.moveByX(0, y: -80, duration: 0.05))
+        // set the visible property to false
+        visible = false
     }
     
 }
