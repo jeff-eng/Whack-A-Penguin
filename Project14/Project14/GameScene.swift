@@ -11,6 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var numRounds = 0
     var slots = [WhackSlot]()
     
     var gameScore: SKLabelNode!
@@ -49,7 +50,36 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-       /* Called when a touch begins */
+        if let touch = touches.first {
+            let location = touch.locationInNode(self)
+            let nodes = nodesAtPoint(location)
+            
+            for node in nodes {
+                if node.name == "charFriend" {
+                    let whackSlot = node.parent!.parent as! WhackSlot
+                    if !whackSlot.visible { continue }
+                    if whackSlot.isHit { continue }
+                    // call the hit method to make the penguin hide itself
+                    whackSlot.hit()
+                    // subtract 5 pts from score
+                    score -= 5
+                    // run action that plays a "bad hit" sound
+                    runAction(SKAction.playSoundFileNamed("whackBad.caf", waitForCompletion: false))
+                } else if node.name == "charEnemy" {
+                    let whackSlot = node.parent!.parent as! WhackSlot
+                    if !whackSlot.visible { continue }
+                    if whackSlot.isHit { continue }
+                    
+                    whackSlot.charNode.xScale = 0.85
+                    whackSlot.charNode.yScale = 0.85
+                    
+                    whackSlot.hit()
+                    score += 1
+                    
+                    runAction(SKAction.playSoundFileNamed("whack.caf", waitForCompletion: false))
+                }
+            }
+        }
         
     }
    
@@ -69,6 +99,26 @@ class GameScene: SKScene {
     }
     
     func createEnemy() {
+        // Increments the numRounds counter each time this method is called
+        numRounds += 1
+        
+        // When the number of rounds hits 30, hide all the slots to end the game
+        if numRounds >= 30 {
+            for slot in slots {
+                slot.hide()
+            }
+            
+            let gameOver = SKSpriteNode(imageNamed: "gameOver")
+            // position x and y
+            gameOver.position = CGPoint(x: 512, y: 384)
+            // give a z position
+            gameOver.zPosition = 1
+            // add this child node to the Game Scene
+            addChild(gameOver)
+            
+            return
+        }
+        
         popupTime *= 0.991
         
         slots = GKRandomSource.sharedRandom().arrayByShufflingObjectsInArray(slots) as! [WhackSlot]
