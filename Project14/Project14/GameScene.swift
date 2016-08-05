@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import GameplayKit
 
 class GameScene: SKScene {
     
@@ -18,24 +19,33 @@ class GameScene: SKScene {
             gameScore.text = "Score: \(score)"
         }
     }
+    var popupTime = 0.85
     
     override func didMoveToView(view: SKView) {
+        
+        // Adds a background as a node to the Game Scene
         let background = SKSpriteNode(imageNamed: "whackBackground")
         background.position = CGPoint(x: 512, y: 384)
         background.blendMode = .Replace
         background.zPosition = -1
         addChild(background)
         
+        // Adds the score label to the Game Scene
         gameScore = SKLabelNode(fontNamed: "Chalkduster")
         gameScore.text = "Score: 0"
         gameScore.position = CGPoint(x: 8, y: 8)
         gameScore.horizontalAlignmentMode = .Left
         addChild(gameScore)
         
+        // Create rows of slots with calculated x and y coordinates
         for i in 0..<5 { createSlotAt(CGPoint(x: 100 + (i * 170), y: 410)) }
         for i in 0..<4 { createSlotAt(CGPoint(x: 180 + (i * 170), y: 320)) }
         for i in 0..<5 { createSlotAt(CGPoint(x: 100 + (i * 170), y: 230)) }
         for i in 0..<4 { createSlotAt(CGPoint(x: 180 + (i * 170), y: 140)) }
+        
+        RunAfterDelay(1) { [unowned self] in
+            self.createEnemy()
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -57,4 +67,31 @@ class GameScene: SKScene {
         // Store this object in the slots array that stores WhackSlot objects
         slots.append(slot)
     }
+    
+    func createEnemy() {
+        popupTime *= 0.991
+        
+        slots = GKRandomSource.sharedRandom().arrayByShufflingObjectsInArray(slots) as! [WhackSlot]
+        slots[0].show(hideTime: popupTime)
+        
+        let randomInteger = RandomInt(min: 0, max: 12)
+        if randomInteger > 4 { slots[1].show(hideTime: popupTime) }
+        if randomInteger > 8 { slots[2].show(hideTime: popupTime) }
+        if randomInteger > 10 { slots[3].show(hideTime: popupTime) }
+        if randomInteger > 11 { slots[4].show(hideTime: popupTime) }
+
+        let minDelay = popupTime / 2.0
+        let maxDelay = popupTime * 2
+        
+        RunAfterDelay(RandomDouble(min: minDelay, max: maxDelay)) { [unowned self] in
+            self.createEnemy()
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
 }
