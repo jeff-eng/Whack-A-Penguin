@@ -20,6 +20,7 @@ class GameScene: SKScene {
             gameScore.text = "Score: \(score)"
         }
     }
+    
     var popupTime = 0.85
     
     override func didMoveToView(view: SKView) {
@@ -137,11 +138,5 @@ class GameScene: SKScene {
             self.createEnemy()
         }
     }
-    
-    
-    
-    
-    
-    
     
 }
